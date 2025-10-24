@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
@@ -8,9 +8,9 @@ import * as Haptics from 'expo-haptics';
 import { questionsService } from '@/services/questionsService';
 import QuestionCard from '@/components/QuestionCard';
 
-const gameQuestions = questionsService.getRandomQuestions(10);
-
 export default function JogoScreen() {
+  const [gameQuestions, setGameQuestions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -24,7 +24,21 @@ export default function JogoScreen() {
   const question = gameQuestions[currentQuestion];
 
   useEffect(() => {
-    if (answered || timeLeft === 0) return;
+    const loadQuestions = async () => {
+      try {
+        const questions = await questionsService.getRandomQuestions(10);
+        setGameQuestions(questions);
+      } catch (error) {
+        console.error('Error loading questions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadQuestions();
+  }, []);
+
+  useEffect(() => {
+    if (answered || timeLeft === 0 || isLoading || !question) return;
     
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -37,7 +51,7 @@ export default function JogoScreen() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [answered, timeLeft]);
+  }, [answered, timeLeft, isLoading, question]);
 
   const handleAnswer = (answerIndex: number | null) => {
     if (answered) return;
@@ -90,6 +104,18 @@ export default function JogoScreen() {
     return theme.colors.error;
   };
 
+  if (isLoading || gameQuestions.length === 0) {
+    return (
+      <LinearGradient
+        colors={[theme.colors.black, theme.colors.primary + '30']}
+        style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}
+      >
+        <ActivityIndicator size="large" color={theme.colors.gold} />
+        <Text style={{ color: theme.colors.white, marginTop: 16, fontSize: 16 }}>Carregando perguntas...</Text>
+      </LinearGradient>
+    );
+  }
+
   return (
     <LinearGradient
       colors={[theme.colors.black, theme.colors.primary + '30']}
@@ -136,7 +162,7 @@ export default function JogoScreen() {
           onSelectAnswer={handleAnswer}
           disabled={answered}
           showResult={answered}
-          type={question.tipo as any}
+          type={question.tipo}
         />
       </Animated.View>
 

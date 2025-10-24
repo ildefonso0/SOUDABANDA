@@ -1,13 +1,16 @@
-import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Animated, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 import { useRouter } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { questionsService } from '@/services/questionsService';
 
 export default function HomeScreen() {
   const router = useRouter();
   const flagAnimation = useRef(new Animated.Value(0)).current;
+  const [syncStatus, setSyncStatus] = useState<string>('Sincronizado');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     Animated.loop(
@@ -24,7 +27,34 @@ export default function HomeScreen() {
         }),
       ])
     ).start();
+
+    loadSyncStatus();
   }, []);
+
+  const loadSyncStatus = async () => {
+    const status = await questionsService.getSyncStatus();
+    if (status) {
+      const lastSync = new Date(status.lastSync);
+      setSyncStatus(`Última atualização: ${lastSync.toLocaleDateString()}`);
+    }
+  };
+
+  const handleManualUpdate = async () => {
+    setIsUpdating(true);
+    try {
+      const success = await questionsService.refreshData();
+      if (success) {
+        Alert.alert('Sucesso', 'Conteúdo atualizado com sucesso!');
+        loadSyncStatus();
+      } else {
+        Alert.alert('Aviso', 'Não há atualizações disponíveis ou não foi possível conectar ao GitHub.');
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível atualizar o conteúdo. Tente novamente mais tarde.');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const translateX = flagAnimation.interpolate({
     inputRange: [0, 1],
@@ -75,11 +105,26 @@ export default function HomeScreen() {
         />
       </View>
 
-      <View style={styles.updateNotice}>
-        <Ionicons name="sync" size={16} color={theme.colors.gold} />
-        <Text style={styles.updateText}>
-          Atualização automática das perguntas em 24h ⟳
-        </Text>
+      <View style={styles.updateSection}>
+        <TouchableOpacity 
+          style={styles.updateButton}
+          onPress={handleManualUpdate}
+          disabled={isUpdating}
+        >
+          <Ionicons 
+            name={isUpdating ? "hourglass" : "sync"} 
+            size={20} 
+            color={theme.colors.gold} 
+          />
+          <Text style={styles.updateButtonText}>
+            {isUpdating ? 'Atualizando...' : 'Atualizar Conteúdo'}
+          </Text>
+        </TouchableOpacity>
+        
+        <View style={styles.updateNotice}>
+          <Ionicons name="information-circle" size={16} color={theme.colors.textSecondary} />
+          <Text style={styles.updateText}>{syncStatus}</Text>
+        </View>
       </View>
     </LinearGradient>
   );
@@ -158,16 +203,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: theme.colors.textSecondary,
   },
+  updateSection: {
+    marginTop: 'auto',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    gap: 12,
+  },
+  updateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.black + 'CC',
+    borderRadius: theme.borderRadius.lg,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: theme.colors.gold + '50',
+    gap: 8,
+  },
+  updateButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: theme.colors.gold,
+  },
   updateNotice: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 'auto',
-    marginBottom: 20,
-    gap: 8,
+    gap: 6,
   },
   updateText: {
-    fontSize: 12,
+    fontSize: 11,
     color: theme.colors.textSecondary,
   },
 });

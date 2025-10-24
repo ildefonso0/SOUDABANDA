@@ -32,7 +32,12 @@ app/
 └── +not-found.tsx       # Tela 404
 
 components/
-└── QuestionCard.tsx     # Componente de pergunta reutilizável
+├── QuestionCard.tsx          # Componente de pergunta reutilizável (legacy)
+├── DynamicQuizRenderer.tsx   # Renderizador dinâmico para todos os tipos
+├── QuizMultiplaEscolha.tsx   # Componente para múltipla escolha
+├── QuizVerdadeiroFalso.tsx   # Componente para verdadeiro/falso
+├── QuizImagemTexto.tsx       # Componente para quiz com imagem
+└── QuizCompletarFrase.tsx    # Componente para completar frase
 
 constants/
 └── theme.ts             # Tema e cores do app
@@ -41,10 +46,12 @@ types/
 └── quiz.ts              # Tipos TypeScript
 
 services/
-└── questionsService.ts  # Serviço de perguntas
+├── questionsService.ts  # Serviço principal de perguntas
+├── updateService.ts     # Serviço de sincronização com GitHub
+└── cache.ts             # Serviço de cache local (AsyncStorage)
 
 data/
-└── questions.json       # Banco de perguntas (10 perguntas sobre Angola)
+└── questions.json       # Banco de perguntas local (fallback)
 ```
 
 ## Funcionalidades Implementadas
@@ -65,13 +72,21 @@ data/
 - [x] Suporte para perguntas com áudio (expo-av)
 - [x] Componente QuestionCard reutilizável para todos os tipos de perguntas
 
+### ✅ Integração GitHub (v2.0 - 24 de Outubro de 2025)
+- [x] Sincronização automática com repositório GitHub
+- [x] Suporte para múltiplos tipos de quiz (multipla_escolha, verdadeiro_falso, imagem_para_texto, completar_frase)
+- [x] Cache local para modo offline (AsyncStorage)
+- [x] Atualização automática a cada 24 horas
+- [x] Botão de atualização manual
+- [x] Status de sincronização visível ao usuário
+- [x] Comparação de versões para downloads inteligentes
+
 ### 🚧 Próximas Implementações
-- [ ] Sincronização com Google Drive (perguntas, imagens, áudios)
 - [ ] Sistema de ranking online (backend)
-- [ ] Modo offline completo
 - [ ] Compartilhamento de resultados
 - [ ] Estatísticas avançadas por categoria
 - [ ] Aprendizagem adaptativa (IA)
+- [ ] Notificações push para novos conteúdos
 
 ## Estrutura de Dados
 
@@ -126,15 +141,56 @@ O app está configurado para rodar no ambiente Replit:
 - ✅ Correção do bug "Todas as Categorias" no modo treino
 - ✅ Adição de suporte para perguntas com áudio usando expo-av
 - ✅ QuestionCard com controles play/pause para áudio
+- ✅ **Integração completa com GitHub**:
+  - Sincronização automática de perguntas e categorias
+  - Suporte para 4 tipos de quiz (múltipla escolha, verdadeiro/falso, imagem-texto, completar frase)
+  - Cache local com AsyncStorage
+  - Auto-update a cada 24 horas
+  - Botão de atualização manual na tela inicial
+
+## Integração com GitHub
+
+### Repositório de Dados
+**URL:** https://github.com/ildefonso0/QUIZ_SOU_DA_BANDA
+
+O aplicativo agora sincroniza automaticamente com este repositório do GitHub, que serve como base de dados central. Toda vez que você fizer `push` de novos quizzes ou atualizações, o app baixará automaticamente o novo conteúdo dentro de 24 horas.
+
+### Estrutura de Dados no GitHub
+
+```
+QUIZ_SOU_DA_BANDA/
+├── data/
+│   ├── config.json       # Versão, tema e configurações
+│   ├── categorias.json   # Lista de categorias
+│   └── quizzes.json      # Todas as perguntas
+└── imagens/              # Imagens dos quizzes
+    ├── historia/
+    ├── geografia/
+    └── cultura/
+```
+
+### Tipos de Quiz Suportados
+
+1. **multipla_escolha** - Pergunta com múltiplas opções
+2. **verdadeiro_falso** - Pergunta de verdadeiro ou falso
+3. **imagem_para_texto** - Mostrar imagem e pedir resposta em texto
+4. **completar_frase** - Completar uma frase ou pensamento
+
+### Como Funciona
+
+1. **Primeira Execução**: App baixa todos os dados do GitHub
+2. **Verificação de Versão**: Compara `config.versao` e `ultima_atualizacao`
+3. **Download Condicional**: Só baixa se houver versão nova
+4. **Cache Local**: Dados ficam salvos para uso offline
+5. **Auto-Update**: Verifica atualizações a cada 24h automaticamente
+
+### Atualização Manual
+
+O usuário pode forçar uma atualização clicando no botão "Atualizar Conteúdo" na tela inicial.
 
 ## Próximos Passos Importantes
 
-1. **Integração Google Drive**
-   - Configurar API do Google Drive
-   - Implementar sincronização automática (24h)
-   - Cache local para modo offline
-
-2. **Sistema de Ranking Online**
+1. **Sistema de Ranking Online**
    - Backend para salvar pontuações
    - Ranking por província
    - Atualização em tempo real
