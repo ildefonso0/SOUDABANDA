@@ -1,0 +1,132 @@
+[
+  {
+    "id": "001",
+    "categoria": "História",
+    "tipo": "text",
+    "pergunta": "Qual foi o primeiro presidente de Angola?",
+    "opcoes": [
+      { "texto": "Agostinho Neto" },
+      { "texto": "José Eduardo dos Santos" },
+      { "texto": "João Lourenço" }
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Agostinho Neto foi o primeiro presidente de Angola, governando de 1975 a 1979. Poeta e médico, foi uma figura central na luta pela independência."
+  },
+  {
+    "id": "002",
+    "categoria": "Geografia",
+    "tipo": "text",
+    "pergunta": "Qual é a capital de Angola?",
+    "opcoes": [
+      { "texto": "Benguela" },
+      { "texto": "Luanda" },
+      { "texto": "Huambo" }
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Luanda é a capital e maior cidade de Angola, localizada na costa atlântica. É o centro económico, político e cultural do país."
+  },
+  {
+    "id": "003",
+    "categoria": "Cultura",
+    "tipo": "text",
+    "pergunta": "Qual dança tradicional angolana deu origem à Kizomba?",
+    "opcoes": [
+      { "texto": "Semba" },
+      { "texto": "Kuduro" },
+      { "texto": "Rebita" }
+    ],
+    "resposta_correta": 0,
+    "explicacao": "O Semba é a dança tradicional angolana que deu origem à Kizomba. É uma dança alegre e sensual que representa a cultura angolana."
+  },
+  {
+    "id": "004",
+    "categoria": "Geografia",
+    "tipo": "text",
+    "pergunta": "Quantas províncias tem Angola?",
+    "opcoes": [
+      { "texto": "16 províncias" },
+      { "texto": "18 províncias" },
+      { "texto": "20 províncias" }
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Angola é dividida em 18 províncias: Luanda, Benguela, Huíla, Huambo, Cabinda, Cuanza Norte, Cuanza Sul, Cunene, Bengo, Bié, Cuando Cubango, Lunda Norte, Lunda Sul, Malanje, Moxico, Namibe, Uíge e Zaire."
+  },
+  {
+    "id": "005",
+    "categoria": "História",
+    "tipo": "text",
+    "pergunta": "Em que ano Angola conquistou a independência?",
+    "opcoes": [
+      { "texto": "1975" },
+      { "texto": "1960" },
+      { "texto": "1980" }
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Angola conquistou a independência de Portugal no dia 11 de novembro de 1975, após uma longa luta de libertação."
+  },
+  {
+    "id": "006",
+    "categoria": "Cultura",
+    "tipo": "text",
+    "pergunta": "Qual é o instrumento musical tradicional angolano de cordas?",
+    "opcoes": [
+      { "texto": "Kissange" },
+      { "texto": "Dikanza" },
+      { "texto": "Marimba" }
+    ],
+    "resposta_correta": 0,
+    "explicacao": "O Kissange (ou Mbira) é um instrumento de cordas tradicional angolano, usado em cerimónias e celebrações culturais."
+  },
+  {
+    "id": "007",
+    "categoria": "Natureza",
+    "tipo": "text",
+    "pergunta": "Qual é a segunda maior cascata de África, localizada em Angola?",
+    "opcoes": [
+      { "texto": "Quedas de Kalandula" },
+      { "texto": "Quedas de Ruacaná" },
+      { "texto": "Quedas do Binga" }
+    ],
+    "resposta_correta": 0,
+    "explicacao": "As Quedas de Kalandula, na província de Malanje, são a segunda maior cascata de África com 105 metros de altura e 400 metros de largura."
+  },
+  {
+    "id": "008",
+    "categoria": "Língua",
+    "tipo": "text",
+    "pergunta": "Além do Português, qual é a língua nacional mais falada em Angola?",
+    "opcoes": [
+      { "texto": "Umbundu" },
+      { "texto": "Kikongo" },
+      { "texto": "Kimbundu" }
+    ],
+    "resposta_correta": 0,
+    "explicacao": "O Umbundu é a língua nacional mais falada em Angola, principalmente no centro e sul do país, incluindo províncias como Huambo, Bié e Benguela."
+  },
+  {
+    "id": "009",
+    "categoria": "Desporto",
+    "tipo": "text",
+    "pergunta": "Qual é o desporto mais popular em Angola?",
+    "opcoes": [
+      { "texto": "Basquetebol" },
+      { "texto": "Futebol" },
+      { "texto": "Andebol" }
+    ],
+    "resposta_correta": 1,
+    "explicacao": "O Futebol é o desporto mais popular em Angola. A selecção nacional, conhecida como 'Palancas Negras', já participou em várias Copas de África."
+  },
+  {
+    "id": "010",
+    "categoria": "Economia",
+    "tipo": "text",
+    "pergunta": "Qual é o principal recurso natural de Angola?",
+    "opcoes": [
+      { "texto": "Ouro" },
+      { "texto": "Petróleo" },
+      { "texto": "Cobre" }
+    ],
+    "resposta_correta": 1,
+    "explicacao": "O petróleo é o principal recurso natural de Angola, representando a maior parte das exportações e receitas do país. Angola é um dos maiores produtores de petróleo em África."
+  }
+]
