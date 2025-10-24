@@ -31,11 +31,20 @@ app/
 ├── sobre-angola.tsx     # Informações sobre Angola
 └── +not-found.tsx       # Tela 404
 
+components/
+└── QuestionCard.tsx     # Componente de pergunta reutilizável
+
 constants/
 └── theme.ts             # Tema e cores do app
 
 types/
 └── quiz.ts              # Tipos TypeScript
+
+services/
+└── questionsService.ts  # Serviço de perguntas
+
+data/
+└── questions.json       # Banco de perguntas (10 perguntas sobre Angola)
 ```
 
 ## Funcionalidades Implementadas
@@ -44,6 +53,7 @@ types/
 - [x] Tela inicial com logo animado
 - [x] Navegação por tabs
 - [x] Modo Quiz com temporizador (30s)
+- [x] Modo Treino com filtragem por categorias
 - [x] Sistema de pontuação e streak
 - [x] Feedback visual e tátil (vibração)
 - [x] Tela de ranking com mock data
@@ -51,11 +61,12 @@ types/
 - [x] Tela "Sobre Angola" com conteúdo educativo
 - [x] Tema dark com cores patrióticas
 - [x] Animações suaves
+- [x] Suporte para perguntas com imagem
+- [x] Suporte para perguntas com áudio (expo-av)
+- [x] Componente QuestionCard reutilizável para todos os tipos de perguntas
 
 ### 🚧 Próximas Implementações
 - [ ] Sincronização com Google Drive (perguntas, imagens, áudios)
-- [ ] Suporte para perguntas com imagem
-- [ ] Suporte para perguntas com áudio
 - [ ] Sistema de ranking online (backend)
 - [ ] Modo offline completo
 - [ ] Compartilhamento de resultados
@@ -96,6 +107,7 @@ types/
 - **Expo Linear Gradient** - Gradientes
 - **Expo Haptics** - Feedback tátil
 - **Expo Icons** - Ícones
+- **Expo AV** - Reprodução de áudio (deprecado no SDK 54, migrar para expo-audio futuramente)
 
 ## Desenvolvimento no Replit
 
@@ -105,8 +117,15 @@ O app está configurado para rodar no ambiente Replit:
 - Cache desabilitado para atualizações em tempo real
 - Status Bar: light (texto claro)
 
-## Data de Criação
-24 de Outubro de 2025
+## Histórico de Mudanças
+
+### 24 de Outubro de 2025
+- ✅ Criação inicial do projeto
+- ✅ Implementação de todas as telas principais
+- ✅ Sistema de quiz e treino funcional
+- ✅ Correção do bug "Todas as Categorias" no modo treino
+- ✅ Adição de suporte para perguntas com áudio usando expo-av
+- ✅ QuestionCard com controles play/pause para áudio
 
 ## Próximos Passos Importantes
 
