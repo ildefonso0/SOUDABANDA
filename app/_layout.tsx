@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { questionsService } from '@/services/questionsService';
 import { userService } from '@/services/userService';
 
 export default function RootLayout() {
-  useFrameworkReady();
   const router = useRouter();
   const segments = useSegments();
   const [isReady, setIsReady] = useState(false);
