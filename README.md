@@ -93,13 +93,13 @@ QUIZ_SOU_DA_BANDA/
     "id": 1,
     "nome": "História",
     "descricao": "Eventos históricos de Angola",
-    "icone": "https://raw.githubusercontent.com/.../icone.png"
+    "icone": "https://raw.githubusercontent.com/ildefonso0/QUIZ_SOU_DA_BANDA/main/imagens/icones/historia.png"
   },
   {
     "id": 2,
     "nome": "Geografia",
     "descricao": "Cidades, rios e províncias",
-    "icone": "https://raw.githubusercontent.com/.../icone.png"
+    "icone": "https://raw.githubusercontent.com/ildefonso0/QUIZ_SOU_DA_BANDA/main/imagens/icones/geografia.png"
   }
 ]
 ```
@@ -129,7 +129,7 @@ QUIZ_SOU_DA_BANDA/
     "id": 3,
     "categoria": "Cultura",
     "tipo": "imagem_para_texto",
-    "imagem": "https://raw.githubusercontent.com/.../danca.jpg",
+    "imagem": "https://raw.githubusercontent.com/ildefonso0/QUIZ_SOU_DA_BANDA/main/imagens/cultura/danca.jpg",
     "pergunta": "Qual é o nome desta dança tradicional?",
     "resposta_correta": "Semba",
     "explicacao": "O Semba é uma dança tradicional angolana que originou a Kizomba."
@@ -170,7 +170,7 @@ QUIZ_SOU_DA_BANDA/
 Configure as URLs no arquivo `services/updateService.ts`:
 
 ```typescript
-const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/SEU_USUARIO/QUIZ_SOU_DA_BANDA/main';
+const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/ildefonso0/QUIZ_SOU_DA_BANDA/main';
 ```
 
 O app irá buscar:
