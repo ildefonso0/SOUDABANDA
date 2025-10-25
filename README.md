@@ -138,7 +138,7 @@ QUIZ_SOU_DA_BANDA/
     "id": 4,
     "categoria": "História",
     "tipo": "completar_frase",
-    "pergunta": "O primeiro presidente de Angola foi ___",
+    "pergunta": "O primeiro presidente de Angola foi ___,",
     "resposta_correta": "Agostinho Neto",
     "explicacao": "Dr. António Agostinho Neto foi o primeiro presidente de Angola."
   }
@@ -205,10 +205,6 @@ O aplicativo usa Supabase para armazenar perfis de usuários e rankings. A estru
 - `erros` (integer) - Total de erros
 - `tempo_medio` (integer) - Tempo médio de resposta
 - `sequencia_maxima` (integer) - Maior sequência de acertos
-
-## 📚 Documentação
-
-Veja `replit.md` para documentação completa do projeto.
 
 ## 📄 Licença
 
