@@ -1,24 +1,40 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 import { questionsService } from '@/services/questionsService';
 import QuestionCard from '@/components/QuestionCard';
+import { responsive } from '@/utils/responsive';
 
 export default function TreinoScreen() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [dimensions, setDimensions] = useState(Dimensions.get('window'));
 
-  const categories = questionsService.getCategories();
-  const questions = selectedCategory 
-    ? (selectedCategory === 'all' 
+  useEffect(() => {
+    const loadCategories = async () => {
+      const cats = await questionsService.getCategories();
+      setCategories(cats);
+    };
+    loadCategories();
+
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setDimensions(window);
+    });
+
+    return () => subscription?.remove();
+  }, []);
+
+  const questions = selectedCategory
+    ? (selectedCategory === 'all'
       ? questionsService.getAllQuestions()
       : questionsService.getQuestionsByCategory(selectedCategory))
     : questionsService.getAllQuestions();
-  
+
   const question = questions[currentQuestion];
 
   const handleAnswer = (answerIndex: number) => {
@@ -53,44 +69,46 @@ export default function TreinoScreen() {
         colors={[theme.colors.black, theme.colors.gold + '20']}
         style={styles.container}
       >
-        <Text style={styles.title}>Modo Treino</Text>
-        <Text style={styles.subtitle}>Escolha uma categoria para começar</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={styles.title}>Modo Treino</Text>
+          <Text style={styles.subtitle}>Escolha uma categoria para começar</Text>
 
-        <View style={styles.categoriesContainer}>
-          <TouchableOpacity 
-            style={[styles.categoryCard, { borderColor: theme.colors.gold }]}
-            onPress={() => setSelectedCategory('all')}
-          >
-            <Ionicons name="apps" size={40} color={theme.colors.gold} />
-            <Text style={styles.categoryTitle}>Todas as Categorias</Text>
-            <Text style={styles.categoryCount}>{questions.length} perguntas</Text>
-          </TouchableOpacity>
+          <View style={styles.categoriesContainer}>
+            <TouchableOpacity
+              style={[styles.categoryCard, { borderColor: theme.colors.gold }]}
+              onPress={() => setSelectedCategory('all')}
+            >
+              <Ionicons name="apps" size={responsive.moderateScale(40)} color={theme.colors.gold} />
+              <Text style={styles.categoryTitle}>Todas as Categorias</Text>
+              <Text style={styles.categoryCount}>{questions.length} perguntas</Text>
+            </TouchableOpacity>
 
-          {categories.map((category) => {
-            const count = questionsService.getQuestionsByCategory(category).length;
-            const icons: any = {
-              'História': 'book',
-              'Geografia': 'map',
-              'Cultura': 'musical-notes',
-              'Língua': 'language',
-              'Natureza': 'leaf',
-              'Desporto': 'football',
-              'Economia': 'cash',
-            };
-            
-            return (
-              <TouchableOpacity
-                key={category}
-                style={styles.categoryCard}
-                onPress={() => setSelectedCategory(category)}
-              >
-                <Ionicons name={icons[category] || 'help'} size={40} color={theme.colors.primary} />
-                <Text style={styles.categoryTitle}>{category}</Text>
-                <Text style={styles.categoryCount}>{count} perguntas</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+            {categories.map((category: string) => {
+              const count = questionsService.getQuestionsByCategory(category).length;
+              const icons: any = {
+                'História': 'book',
+                'Geografia': 'map',
+                'Cultura': 'musical-notes',
+                'Língua': 'language',
+                'Natureza': 'leaf',
+                'Desporto': 'football',
+                'Economia': 'cash',
+              };
+
+              return (
+                <TouchableOpacity
+                  key={category}
+                  style={styles.categoryCard}
+                  onPress={() => setSelectedCategory(category)}
+                >
+                  <Ionicons name={icons[category] || 'help'} size={responsive.moderateScale(40)} color={theme.colors.primary} />
+                  <Text style={styles.categoryTitle}>{category}</Text>
+                  <Text style={styles.categoryCount}>{count} perguntas</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
       </LinearGradient>
     );
   }
@@ -101,16 +119,16 @@ export default function TreinoScreen() {
       style={styles.container}
     >
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={() => {
             setSelectedCategory(null);
             setCurrentQuestion(0);
             setSelectedAnswer(null);
             setShowExplanation(false);
-          }} 
+          }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.white} />
+          <Ionicons name="arrow-back" size={responsive.moderateScale(24)} color={theme.colors.white} />
         </TouchableOpacity>
         <View style={styles.headerInfo}>
           <Text style={styles.headerTitle}>
@@ -120,7 +138,7 @@ export default function TreinoScreen() {
             {currentQuestion + 1} / {questions.length}
           </Text>
         </View>
-        <View style={{ width: 40 }} />
+        <View style={{ width: responsive.moderateScale(40) }} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -152,7 +170,7 @@ export default function TreinoScreen() {
             onPress={handlePrevious}
             disabled={currentQuestion === 0}
           >
-            <Ionicons name="arrow-back" size={20} color={theme.colors.white} />
+            <Ionicons name="arrow-back" size={responsive.moderateScale(20)} color={theme.colors.white} />
             <Text style={styles.navButtonText}>Anterior</Text>
           </TouchableOpacity>
 
@@ -163,7 +181,7 @@ export default function TreinoScreen() {
             <Text style={styles.navButtonText}>
               {currentQuestion < questions.length - 1 ? 'Próxima' : 'Recomeçar'}
             </Text>
-            <Ionicons name="arrow-forward" size={20} color={theme.colors.white} />
+            <Ionicons name="arrow-forward" size={responsive.moderateScale(20)} color={theme.colors.white} />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -174,52 +192,52 @@ export default function TreinoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60,
-    paddingHorizontal: 20,
+    paddingTop: responsive.hp(7),
+    paddingHorizontal: responsive.wp(5),
   },
   title: {
-    fontSize: 32,
+    fontSize: responsive.getResponsiveFontSize(32),
     fontWeight: 'bold',
     color: theme.colors.white,
-    marginBottom: 8,
+    marginBottom: responsive.getResponsiveSpacing(8),
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: responsive.getResponsiveFontSize(16),
     color: theme.colors.textSecondary,
-    marginBottom: 32,
+    marginBottom: responsive.getResponsiveSpacing(32),
   },
   categoriesContainer: {
-    gap: 12,
+    gap: responsive.getResponsiveSpacing(12),
   },
   categoryCard: {
     backgroundColor: theme.colors.black + 'CC',
     borderRadius: theme.borderRadius.lg,
-    padding: 24,
+    padding: responsive.getResponsiveSpacing(24),
     alignItems: 'center',
     borderWidth: 2,
     borderColor: theme.colors.primary + '30',
   },
   categoryTitle: {
-    fontSize: 18,
+    fontSize: responsive.getResponsiveFontSize(18),
     fontWeight: 'bold',
     color: theme.colors.white,
-    marginTop: 12,
-    marginBottom: 4,
+    marginTop: responsive.getResponsiveSpacing(12),
+    marginBottom: responsive.getResponsiveSpacing(4),
   },
   categoryCount: {
-    fontSize: 14,
+    fontSize: responsive.getResponsiveFontSize(14),
     color: theme.colors.textSecondary,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: responsive.getResponsiveSpacing(24),
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: responsive.moderateScale(40),
+    height: responsive.moderateScale(40),
+    borderRadius: responsive.moderateScale(20),
     backgroundColor: theme.colors.black + 'CC',
     alignItems: 'center',
     justifyContent: 'center',
@@ -228,51 +246,51 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: responsive.getResponsiveFontSize(18),
     fontWeight: 'bold',
     color: theme.colors.white,
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: responsive.getResponsiveFontSize(14),
     color: theme.colors.textSecondary,
   },
   categoryBadge: {
     alignSelf: 'flex-start',
     backgroundColor: theme.colors.gold + '30',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: responsive.getResponsiveSpacing(16),
+    paddingVertical: responsive.getResponsiveSpacing(8),
     borderRadius: 20,
-    marginBottom: 24,
+    marginBottom: responsive.getResponsiveSpacing(24),
   },
   categoryText: {
-    fontSize: 14,
+    fontSize: responsive.getResponsiveFontSize(14),
     color: theme.colors.gold,
     fontWeight: 'bold',
   },
   explanationBox: {
     backgroundColor: theme.colors.gold + '20',
     borderRadius: theme.borderRadius.lg,
-    padding: 20,
-    marginTop: 24,
+    padding: responsive.getResponsiveSpacing(20),
+    marginTop: responsive.getResponsiveSpacing(24),
     borderLeftWidth: 4,
     borderLeftColor: theme.colors.gold,
   },
   explanationTitle: {
-    fontSize: 18,
+    fontSize: responsive.getResponsiveFontSize(18),
     fontWeight: 'bold',
     color: theme.colors.gold,
-    marginBottom: 8,
+    marginBottom: responsive.getResponsiveSpacing(8),
   },
   explanationText: {
-    fontSize: 16,
+    fontSize: responsive.getResponsiveFontSize(16),
     color: theme.colors.white,
-    lineHeight: 24,
+    lineHeight: responsive.getResponsiveFontSize(24),
   },
   navigation: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 24,
-    marginBottom: 20,
+    gap: responsive.getResponsiveSpacing(12),
+    marginTop: responsive.getResponsiveSpacing(24),
+    marginBottom: responsive.getResponsiveSpacing(20),
   },
   navButton: {
     flex: 1,
@@ -281,8 +299,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: theme.colors.black + 'CC',
     borderRadius: theme.borderRadius.lg,
-    padding: 16,
-    gap: 8,
+    padding: responsive.getResponsiveSpacing(16),
+    gap: responsive.getResponsiveSpacing(8),
     borderWidth: 2,
     borderColor: theme.colors.primary + '30',
   },
@@ -294,7 +312,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   navButtonText: {
-    fontSize: 16,
+    fontSize: responsive.getResponsiveFontSize(16),
     fontWeight: 'bold',
     color: theme.colors.white,
   },
