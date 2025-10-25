@@ -1,47 +1,102 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
-
-const mockRanking = [
-  { posicao: 1, nome: 'João Silva', provincia: 'Luanda', pontos: 2580 },
-  { posicao: 2, nome: 'Maria Santos', provincia: 'Benguela', pontos: 2340 },
-  { posicao: 3, nome: 'Carlos Costa', provincia: 'Huíla', pontos: 2120 },
-  { posicao: 4, nome: 'Ana Sousa', provincia: 'Luanda', pontos: 1950 },
-  { posicao: 5, nome: 'Pedro Neto', provincia: 'Huambo', pontos: 1820 },
-];
+import { userService, UserProfile } from '@/services/userService';
 
 export default function RankingScreen() {
+  const [ranking, setRanking] = useState<UserProfile[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [filterType, setFilterType] = useState<'nacional' | 'provincia'>('nacional');
+  const [currentUserProvince, setCurrentUserProvince] = useState<string>('');
+
+  useEffect(() => {
+    loadRanking();
+  }, [filterType]);
+
+  const loadRanking = async () => {
+    setIsLoading(true);
+    try {
+      const profile = await userService.getCurrentProfile();
+      if (profile) {
+        setCurrentUserProvince(profile.provincia);
+      }
+
+      let rankingData: UserProfile[];
+      if (filterType === 'nacional') {
+        rankingData = await userService.getRanking(20);
+      } else {
+        rankingData = await userService.getRankingByProvincia(profile?.provincia || '', 20);
+      }
+      setRanking(rankingData);
+    } catch (error) {
+      console.error('Error loading ranking:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <LinearGradient
-      colors={[theme.colors.black, theme.colors.primary + '20']}
+      colors={[theme.colors.black, theme.colors.red + '20']}
       style={styles.container}
     >
-      <Text style={styles.title}>🏆 Ranking Nacional</Text>
-      <Text style={styles.subtitle}>Os melhores jogadores de Angola</Text>
+      <Text style={styles.title}>🏆 Ranking</Text>
+      <Text style={styles.subtitle}>Os melhores jogadores</Text>
 
-      <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
-        {mockRanking.map((player) => (
-          <View key={player.posicao} style={styles.rankCard}>
-            <View style={[
-              styles.positionBadge,
-              player.posicao === 1 && styles.goldBadge,
-              player.posicao === 2 && styles.silverBadge,
-              player.posicao === 3 && styles.bronzeBadge,
-            ]}>
-              <Text style={styles.positionText}>#{player.posicao}</Text>
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[styles.filterButton, filterType === 'nacional' && styles.filterButtonActive]}
+          onPress={() => setFilterType('nacional')}
+        >
+          <Text style={[styles.filterText, filterType === 'nacional' && styles.filterTextActive]}>
+            Nacional
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filterType === 'provincia' && styles.filterButtonActive]}
+          onPress={() => setFilterType('provincia')}
+        >
+          <Text style={[styles.filterText, filterType === 'provincia' && styles.filterTextActive]}>
+            {currentUserProvince || 'Província'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.yellow} />
+        </View>
+      ) : ranking.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Ionicons name="trophy-outline" size={64} color={theme.colors.textSecondary} />
+          <Text style={styles.emptyText}>Nenhum jogador no ranking ainda</Text>
+        </View>
+      ) : (
+        <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
+          {ranking.map((player, index) => (
+            <View key={player.id} style={styles.rankCard}>
+              <View style={[
+                styles.positionBadge,
+                index === 0 && styles.goldBadge,
+                index === 1 && styles.silverBadge,
+                index === 2 && styles.bronzeBadge,
+              ]}>
+                <Text style={styles.positionText}>#{index + 1}</Text>
+              </View>
+              <View style={styles.playerInfo}>
+                <Text style={styles.playerName}>{player.nome}</Text>
+                <Text style={styles.provincia}>📍 {player.provincia}</Text>
+              </View>
+              <View style={styles.scoreContainer}>
+                <Text style={styles.score}>{player.pontuacao_total}</Text>
+                <Text style={styles.scoreLabel}>pts</Text>
+              </View>
             </View>
-            <View style={styles.playerInfo}>
-              <Text style={styles.playerName}>{player.nome}</Text>
-              <Text style={styles.provincia}>📍 {player.provincia}</Text>
-            </View>
-            <View style={styles.scoreContainer}>
-              <Text style={styles.score}>{player.pontos}</Text>
-              <Text style={styles.scoreLabel}>pts</Text>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
+      )}
     </LinearGradient>
   );
 }
@@ -62,6 +117,48 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: theme.colors.textSecondary,
     marginBottom: 24,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 24,
+  },
+  filterButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: theme.colors.black + 'CC',
+    borderWidth: 2,
+    borderColor: 'transparent',
+    alignItems: 'center',
+  },
+  filterButtonActive: {
+    borderColor: theme.colors.yellow,
+    backgroundColor: theme.colors.yellow + '20',
+  },
+  filterText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: theme.colors.textSecondary,
+  },
+  filterTextActive: {
+    color: theme.colors.yellow,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
   },
   list: {
     flex: 1,

@@ -1,14 +1,16 @@
 export const theme = {
   colors: {
-    primary: '#D62828',
-    black: '#0B0B0B',
-    gold: '#FDC500',
+    primary: '#CE1126',
+    red: '#CE1126',
+    black: '#000000',
+    yellow: '#FFCB05',
+    gold: '#FFCB05',
     white: '#F5F5F5',
-    background: '#0B0B0B',
+    background: '#000000',
     text: '#F5F5F5',
     textSecondary: '#999999',
     success: '#4CAF50',
-    error: '#FF5252',
+    error: '#CE1126',
   },
   fonts: {
     regular: 'Inter',
